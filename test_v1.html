@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+<title>Bootstrap Table with Add and Delete Row Feature</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto|Varela+Round|Open+Sans">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"></script>
+<style>
+body {
+    color: #404E67;
+    background: #fff;
+    font-family: 'Open Sans', sans-serif;
+}
+.table-wrapper {
+    max-width: 640px;
+    margin: 30px auto;
+    background: #fff;
+    padding: 20px;	
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+}
+.table-title {
+    padding-bottom: 10px;
+    margin: 0 0 10px;
+}
+.table-title h2 {
+    margin: 6px 0 0;
+    font-size: 22px;
+}
+.table-title .add-new{
+    float: right;
+    height: 30px;
+    font-weight: bold;
+    font-size: 12px;
+    text-shadow: none;
+    min-width: 100px;
+    border-radius: 50px;
+    line-height: 13px;
+}
+#myTable .add-new{
+    float: right;
+    height: 30px;
+    font-weight: bold;
+    font-size: 12px;
+    text-shadow: none;
+    min-width: 20px;
+    border-radius: 15px;
+    line-height: 13px;
+}
+.table-title .add-new i {
+    margin-right: 4px;
+}
+#myTable .add-new i {
+    margin-right: 2px;
+}
+table.table {
+    table-layout: fixed;
+}
+table.table tr th, table.table tr td {
+    border-color: #e9e9e9;
+}
+table.table th i {
+    font-size: 13px;
+    margin: 0 5px;
+    cursor: pointer;
+}
+table.table th:last-child {
+    width: 100px;
+}
+table.table td a {
+    cursor: pointer;
+    display: inline-block;
+    margin: 0 5px;
+    min-width: 24px;
+}    
+table.table td a.add, table#myTable td a.add {
+    color: #27C46B;
+}
+table.table td a.edit {
+    color: #FFC107;
+}
+table.table td a.delete {
+    color: #E34724;
+}
+table.table td i {
+    font-size: 19px;
+}
+table.table td a.add i {
+    font-size: 24px;
+    margin-right: -1px;
+    position: relative;
+    top: 3px;
+}    
+table.table .form-control {
+    height: 32px;
+    line-height: 32px;
+    box-shadow: none;
+    border-radius: 2px;
+}
+table.table .form-control.error {
+    border-color: #f50000;
+}
+table.table td .add {
+    display: none;
+}
+</style>
+<script>
+$(document).ready(function(){
+	$('[data-toggle="tooltip"]').tooltip();
+	var actions = $("table td:last-child").html();
+	$(".add-new").click(function(){
+		$(this).attr("disabled", "disabled");
+		var index = $("table tbody tr:last-child").index();
+		var data_row = [];
+		$(this).parents("tr").find('td').each(function() {
+			data_row.push($(this).html());
+		});
+		var row = '<tr>' +
+            '<td>'+data_row[0]+'<br/>'+data_row[1]+'<br/>'+data_row[2]+'</td>' +
+            '<td>1</td>' +
+            '<td>'+data_row[3]+'</td>' +
+			'<td><a class="add" title="Ruaj" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a><a class="edit" title="Modifiko sasinë" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a><a class="delete" title="Fshi medikamentin" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></td>' +
+        '</tr>';
+    	
+		$('.table').append(row);		
+		//$(".table tbody tr").eq(index + 1).find(".add, .edit").toggle();
+        //$('[data-toggle="tooltip"]').tooltip();
+    });
+	
+	// Add row on add button click
+	$(document).on("click", ".add", function(){
+		var empty = false;
+		var input = $(this).parents("tr").find('input[type="number"]');
+        input.each(function(){
+			if(!$(this).val()){
+				$(this).addClass("error");
+				empty = true;
+			} else{
+                $(this).removeClass("error");
+            }
+		});
+		$(this).parents("tr").find(".error").first().focus();
+		if(!empty){
+			input.each(function(){
+				$(this).parent("td").html($(this).val());
+			});			
+			$(this).parents("tr").find(".add, .edit").toggle();
+			$(".add-new").removeAttr("disabled");
+		}		
+    });
+	// Edit row on edit button click
+	$(document).on("click", ".edit", function(){		
+        $(this).parents("tr").find("td:nth-child(2)").each(function(){
+			$(this).html('<input type="number" min="1" class="form-control" value="' + $(this).text() + '">');
+		});		
+		$(this).parents("tr").find(".add, .edit").toggle();
+		$(".add-new").attr("disabled", "disabled");
+    });
+	// Delete row on delete button click
+	$(document).on("click", ".delete", function(){
+        $(this).parents("tr").remove();
+		$(".add-new").removeAttr("disabled");
+    });
+	$("input[type='checkbox']").change(function() {
+		if(this.checked) {
+			alert($(this).val());
+		}
+	});
+});
+
+function myFilterSearch() {
+  // Declare variables
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByTagName("tr");
+
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
+</script>
+<style>
+
+#myInput {
+  /* background-image: url('css/searchicon.png'); Add a search icon to input */
+  background-position: 10px 12px; /* Position the search icon */
+  background-repeat: no-repeat; /* Do not repeat the icon image */
+  width: 100%; /* Full-width */
+  font-size: 16px; /* Increase font-size */
+  padding: 12px 20px 12px 40px; /* Add some padding */
+  border: 1px solid #ddd; /* Add a grey border */
+  margin-bottom: 12px; /* Add some space below the input */
+}
+
+#myTable {
+  border-collapse: collapse; /* Collapse borders */
+  width: 100%; /* Full-width */
+  border: 1px solid #ddd; /* Add a grey border */
+  font-size: 18px; /* Increase font-size */
+}
+
+#myTable th, #myTable td {
+  text-align: left; /* Left-align text */
+  padding: 12px; /* Add padding */
+}
+
+#myTable tr {
+  /* Add a bottom border to all table rows */
+  border-bottom: 1px solid #ddd;
+}
+
+#myTable tr.header, #myTable tr:hover {
+  /* Add a grey background color to the table header and on hover */
+  background-color: #f1f1f1;
+}
+</style>
+<style>
+.accordion {
+  background-color: #71739e;
+  color: #c5c7e8;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+  transition: 0.4s;
+}
+
+.active, .accordion:hover {
+  background-color: #c5c7e8;
+   color: #71739e;
+}
+
+.accordion:after {
+  content: '\002B';
+  color: #c5c7e8;
+  font-weight: bold;
+  float: right;
+  margin-left: 5px;
+}
+
+.active:after {
+  content: "\2212";
+  color: #71739e;
+}
+
+.panel {
+  padding: 0 18px;
+  border-bottom: solid 1px #71739e;
+  background-color: white;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+}
+</style>
+</head>
+<body>
+<button class="accordion">Barna</button>
+<div class="panel">
+  <p>
+  <form action="connection.php" method="POST">
+  <!-- <input type="checkbox" id="Barna1" name="Barna1" value="Barna1">
+  <label for="Barna1">&nbsp;&nbsp;Barna1</label>&nbsp;&nbsp;<input type="checkbox" id="Barna2" name="Barna2" value="Barna2"> <label for="Barna2">&nbsp;&nbsp;Barna 2</label>&nbsp;&nbsp;<input type="checkbox" id="Barna3" name="Barna3" value="Barna3"><label for="vehicle3">&nbsp;&nbsp;Barna 3</label>&nbsp;&nbsp;<input type="submit" value="Submit" style="display:none;"> -->
+  <!-- <label for="checkbox"></label> -->
+  <input type="checkbox" name="klasifikimi" />
+  </form>
+  </p>
+</div>
+
+<button class="accordion">Suplemente</button>
+<div class="panel">
+  <p><form action="/action_page1.php">
+  <input type="checkbox" id="Suplemente4" name="Suplemente4" value="Suplemente4">
+  <label for="Suplemente4">&nbsp;&nbsp;Suplemente 4</label>&nbsp;&nbsp;<input type="checkbox" id="Suplemente5" name="Suplemente5" value="Suplemente"> <label for="Suplemente5">&nbsp;&nbsp;Suplemente 5</label>&nbsp;&nbsp;<input type="checkbox" id="Suplemente6" name="Suplemente6" value="Suplemente 6"><label for="Suplemente6">&nbsp;&nbsp;Suplemente 6</label>&nbsp;&nbsp;<input type="submit" value="Submit" style="display:none;">
+</form></p>
+</div>
+
+<button class="accordion">Kozmetike</button>
+<div class="panel">
+  <p>Nuk ka info.</p>
+</div>
+<button class="accordion">Të tjera</button>
+<div class="panel">
+  <p>Nuk ka info.</p>
+</div>
+<div class="container-lg">
+	<div class="table-responsive">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-8"><h2><b>Kërko</b> medikamentin </h2></div>
+                    
+                </div>
+            </div>
+            <input type="text" id="myInput" onkeyup="myFilterSearch()" placeholder="Search for names..">
+
+<table id="myTable" class="table2">
+  <tr class="header">
+    <th style="width:40%;">Emri</th>
+  <th style="width:30%;">Prodhuesi</th>
+  <th style="width:24%;">Përmbajtja</th>
+  <th style="width:1%;display:none;">Cmimi</th>
+  <th style="width:5%;">Shto</th>
+  </tr>
+  <tr>
+    <td>Ciprofloxacin</td>
+    <td>Abott</td>
+	<td>250 mg / 5tbs</td>
+	<td style="display:none;">250L</td>
+	<td><button type="button" class="btn btn-info add-new"><i class="fa fa-plus"></i> </button></td>
+  </tr>
+  <tr>
+    <td>Ciprofloxacin</td>
+    <td>Abott</td>
+	<td>500 mg / 5tbs</td>
+	<td style="display:none;">350L</td>
+	<td><button type="button" class="btn btn-info add-new"><i class="fa fa-plus"></i> </button></td>
+  </tr>
+  <tr>
+    <td>Ciprofloxacin</td>
+    <td>Abott</td>
+	<td>750 mg / 5tbs</td>
+	<td style="display:none;">500L</td>
+	<td><button type="button" class="btn btn-info add-new"><i class="fa fa-plus"></i> </button></td>
+  </tr>
+  <tr>
+    <td>Zithromax</td>
+    <td>Pfizer</td>
+	<td>250 mg / 30tbs</td>
+	<td style="display:none;">350L</td>
+	<td><button type="button" class="btn btn-info add-new"><i class="fa fa-plus"></i> </button></td>
+  </tr>
+</table>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <div class="table-wrapper">
+            <div class="table-title">
+                <div class="row">
+                    <div class="col-sm-8"><h2><b>Profarma e recetës</b></h2></div>
+                    </div>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Emri</th>
+                        <th>Sasia</th>
+                        <th>Cmimi</th>
+                        <th>Veprime</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div> 
+
+<script>
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+  acc[i].addEventListener("click", function() {
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.maxHeight) {
+      panel.style.maxHeight = null;
+    } else {
+      panel.style.maxHeight = panel.scrollHeight + "px";
+    } 
+  });
+}
+</script>    
+</body>
+</html>
